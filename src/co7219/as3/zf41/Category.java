@@ -1,11 +1,11 @@
 /*
- * zf41 solution to CO7219 Assignment 3, Task 1 The mapper extracts the
+ * zf41 solution to CO7219 Assignment 3, Task 1 
  * 
- * relevant fields from the input line and emits a key-value pair with the
- * category as key and a String containing four numbers separated by commas
- * as value: number of free apps, 0, number of paid apps, total paid apps
- * price. Two of the four numbers are always 0 because each call of the map
- * method processes either free or paid apps.
+ * The mapper extracts the relevant fields from the input line and emits a 
+ * key-value pair with the category as key and a String containing four 
+ * numbers separated by commas as value: number of free apps, 0, number of 
+ * paid apps, total paid apps price. Two of the four numbers are always 0 
+ * because each call of the map method processes either free or paid apps.
  * 
  * The combiner aggregates the values for each category by calculating the
  * sum of each of the four components.
@@ -14,7 +14,7 @@
  * the average paid apps of arrivals by dividing the number of paid apps,
  * and similarly for departures.
  * 
- * please input arguments: 
+ * please input arguments when you run in command line: 
  * -output "output path" 	set output path
  * -data "data source path"	set data source path
  */
@@ -55,8 +55,12 @@ public class Category {
 			// skip empty lines and header lines
 			if (lineElements.length == 0 || lineElements[0].equals("App"))
 				return;
+			
+			//file A(googleplaystore.csv) or file format like that have 13 columns
+			if (lineElements.length != 13) 
+				return;
 
-			// create value v to be output in the format
+			// create value emitValue to be output in the format
 			// (num_Free,0,num_Paid,Paid_price)
 			String emitValue;
 			if (lineElements[6].trim().equals("Free"))
@@ -205,7 +209,7 @@ public class Category {
 	// Get arguments and prase to settings.
 	public static void praseArgs(String[] args) {
 		// add default setting
-		settings.put(SettingType.cmd_dataPath, "GooglePlayStoreDataTest");
+		settings.put(SettingType.cmd_dataPath, "GooglePlayStoreData");
 		settings.put(SettingType.cmd_outputPath, "output/category");
 
 		ArrayList<String> argsList = new ArrayList<String>(Arrays.asList(args));
