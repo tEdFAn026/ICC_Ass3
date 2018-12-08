@@ -23,35 +23,16 @@ public class Category {
 	public static class CategoryMapper extends Mapper<Object, Text, Text, Text> {
 		private Text category = new Text();
 
-		public static String[] splitbycomma(String S) {
-			ArrayList<String> L = new ArrayList<String>();
-			String[] a = new String[0];
-			int i = 0;
-			while (i < S.length()) {
-				int start = i;
-				int end = -1;
-				if (S.charAt(i) == '"') {
-					end = S.indexOf('"', i + 1);
-				} else {
-					end = S.indexOf(',', i) - 1;
-					if (end < 0)
-						end = S.length() - 1;
-				}
-				L.add(S.substring(start, end + 1));
-				i = end + 2;
-			}
-			return L.toArray(a);
-		}
-
 		public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
-			String[] lineElements = splitbycomma(value.toString());
+//			String[] lineElements = splitbycomma(value.toString());
 
+			String csvSplitBy = ",(?=([^\"]*\"[^\"]*\")*[^\"]*$)"; 
+			
+			String[] lineElements = value.toString().split(csvSplitBy);
+			
 			if (lineElements.length == 0 || lineElements[0].equals("App"))
 				return;
-			if (lineElements[1].equals("Baby\"\" pistol explained\"")) {
-				System.out.println(value.toString());
-				System.out.println(lineElements[1]);
-			}
+
 			category.set(lineElements[1].trim());
 			value.set(lineElements[6] + "," + lineElements[7]);
 			context.write(category, value);
