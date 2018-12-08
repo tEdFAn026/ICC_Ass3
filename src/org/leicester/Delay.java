@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.Text;
@@ -160,7 +161,17 @@ public class Delay {
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(Text.class);
 		FileInputFormat.addInputPath(job, new Path(args[0]));
-		FileOutputFormat.setOutputPath(job, new Path(args[1]));
+		FileOutputFormat.setOutputPath(job, new Path(args[1]+"/delay"));
+		
+
+		// 判断output文件夹是否存在，如果存在则删除
+		Path path = new Path(args[1]+"/delay");// 取第1个表示输出目录参数（第0个参数是输入目录）
+		FileSystem fileSystem = path.getFileSystem(conf);// 根据path找到这个文件
+		if (fileSystem.exists(path)) {
+			fileSystem.delete(path, true);// true的意思是，就算output有东西，也一带删除
+		}
+
+		
 		System.exit(job.waitForCompletion(true) ? 0 : 1);
 	}
 }
