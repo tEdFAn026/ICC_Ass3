@@ -48,6 +48,7 @@ public class Category {
 			// String[] lineElements = splitbycomma(value.toString());
 
 			// regex for split string from csv
+			// https://blog.csdn.net/wwd0501/article/details/53333384
 			String csvSplitBy = ",(?=([^\"]*\"[^\"]*\")*[^\"]*$)";
 
 			String[] lineElements = value.toString().split(csvSplitBy);

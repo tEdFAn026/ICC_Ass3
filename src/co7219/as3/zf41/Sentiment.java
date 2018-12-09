@@ -111,6 +111,7 @@ public class Sentiment {
 
 		public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
 			// regex for split string from csv
+			// https://blog.csdn.net/wwd0501/article/details/53333384
 			String csvSplitBy = ",(?=([^\"]*\"[^\"]*\")*[^\"]*$)";
 
 			String[] lineElements = value.toString().split(csvSplitBy);
