@@ -56,9 +56,10 @@ public class Category {
 			// skip empty lines and header lines
 			if (lineElements.length == 0 || lineElements[0].equals("App"))
 				return;
-			
-			//file A(googleplaystore.csv) or file format like that have 13 columns
-			if (lineElements.length != 13) 
+
+			// file A(googleplaystore.csv) or file format like that have 13
+			// columns
+			if (lineElements.length != 13)
 				return;
 
 			// create value emitValue to be output in the format
@@ -111,21 +112,8 @@ public class Category {
 			int sumfree = 0; // number of free apps
 			int sumPaid = 0; // number of paid apps
 			BigDecimal sumPrice = new BigDecimal("0"); // total price
-			// ArrayList<Float> price = new ArrayList<Float>();
 			for (Text val : values) {
 				String[] v = val.toString().split(",");
-				// if (v[0].trim().equals("Free"))
-				// sumfree++;
-				// if (v[0].trim().equals("Paid")) {
-				// sumPaid++;
-				// // price.add(Float.parseFloat(v[1]));
-				// // System.out.print(sumPrice
-				// // +"+"+""+v[1].trim().replace("$", "")+"=");
-				//
-				// sumPrice = sumPrice.add(new
-				// BigDecimal((v[1].trim().replace("$", ""))));
-				// // System.out.println(sumPrice);
-				// }
 				sumfree += Integer.parseInt(v[0]);
 				sumPaid += Integer.parseInt(v[2]);
 				sumPrice = sumPrice.add(new BigDecimal((v[3].trim().replace("$", ""))));
@@ -195,12 +183,13 @@ public class Category {
 
 		// Determine if the output folder exists, delete if it exists
 		Path path = new Path(settings.get(SettingType.cmd_outputPath));
-		FileSystem fileSystem = path.getFileSystem(conf);// Find this file
-															// according to path
+
+		// Find this file according to path
+		FileSystem fileSystem = path.getFileSystem(conf);
 		if (fileSystem.exists(path)) {
-			fileSystem.delete(path, true);// True means that even if there is
-											// something in the output, it is
-											// deleted.
+			// True means that even if there is something in the output, it is
+			// deleted.
+			fileSystem.delete(path, true);
 		}
 
 		System.exit(job.waitForCompletion(true) ? 0 : 1);
@@ -218,13 +207,16 @@ public class Category {
 		for (int i = 0; i < argsList.size(); i++) {
 
 			switch (argsList.get(i)) {
-			case "-output": // argument match, set up output path, if do not
-							// follow a cmd, then path not empty
+			// argument match, set up output path, if do not
+			// follow a cmd, then path not empty
+			case "-output":
 				if ((i + 1) < argsList.size() && !checkCMD(argsList
 						.get(i + 1))/* && checkPath(argsList.get(i + 1)) */)
 					settings.put(SettingType.cmd_outputPath, argsList.get(i + 1));
 				break;
-			case "-data": // same but for data path
+
+			// same but for data path
+			case "-data":
 				if ((i + 1) < argsList.size() && !checkCMD(argsList
 						.get(i + 1))/* && checkPath(argsList.get(i + 1)) */)
 					settings.put(SettingType.cmd_dataPath, argsList.get(i + 1));

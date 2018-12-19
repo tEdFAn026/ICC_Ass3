@@ -48,64 +48,6 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 public class Sentiment {
 
-//	public static class SentimentAppsMapper extends Mapper<Object, Text, Text, Text> {
-//		private Text app = new Text();
-//		
-//		public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
-//			// regex for split string from csv
-//			String csvSplitBy = ",(?=([^\"]*\"[^\"]*\")*[^\"]*$)";
-//
-//			String[] lineElements = value.toString().split(csvSplitBy);
-//
-//			// skip empty lines and header lines
-//			if (lineElements.length == 0 || lineElements[0].equals("App"))
-//				return;
-//
-//			// create value v to be output in the format
-//			// (num_Free,0,num_Paid,Paid_price)
-////			for(String s: lineElements)
-////				System.out.println(s);
-//			
-//			String emitValue;
-//			if (lineElements[6].trim().equals("Free"))
-//				emitValue = "1,0,0,0";
-//			else if (lineElements[6].trim().equals("Paid"))
-//				emitValue = "0,0,1," + lineElements[7];
-//			else
-//				return;
-//
-//			// emit
-//			app.set(lineElements[1].trim());
-//			value.set(emitValue);
-//			context.write(app, value);
-//		}
-//	}
-//
-//	public static class SentimentUsersMapper extends Mapper<Object, Text, Text, Text> {
-//		private Text app = new Text();
-//		
-//		public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
-//			// regex for split string from csv
-//			String csvSplitBy = ",(?=([^\"]*\"[^\"]*\")*[^\"]*$)";
-//
-//			String[] lineElements = value.toString().split(csvSplitBy);
-//
-//			// skip empty lines and header lines
-//			if (lineElements.length == 0 || lineElements[0].equals("App"))
-//				return;
-//
-//			// create value v to be output in the format
-//			// (num_Free,0,num_Paid,Paid_price)
-//			for(String s: lineElements)
-//				System.out.println(s);
-//
-//			// emit
-//			app.set(lineElements[0].trim());
-//			value.set(lineElements[0].trim());
-//			context.write(app, value);
-//		}
-//	}
-	
 	public static class SentimentMapper extends Mapper<Object, Text, Text, Text> {
 		private Text app = new Text();
 
@@ -122,7 +64,8 @@ public class Sentiment {
 
 			String category = "", number_of_view = "0", sentiment_polarity = "0";
 
-			//file A(googleplaystore.csv) or file format like that have 13 columns
+			// file A(googleplaystore.csv) or file format like that have 13
+			// columns
 			if (lineElements.length == 13) {
 
 				if (lineElements[8].equals("Everyone")) {
@@ -130,7 +73,8 @@ public class Sentiment {
 				}
 			}
 
-			//file B(googleplaystore_user_reviews.csv) or file format like that have 5 columns
+			// file B(googleplaystore_user_reviews.csv) or file format like that
+			// have 5 columns
 			if (lineElements.length == 5) {
 				// Sentiment_polarity is not 'nan'
 				if (/* !lineElements[1].equals("nan") && */!lineElements[2].equals("nan")) {
@@ -161,15 +105,18 @@ public class Sentiment {
 			int number_of_view = 0; // number_of_view
 			// I use BigDecimal instead of double or float because for avoiding
 			// loss of precision
-			BigDecimal sentiment_polarity = new BigDecimal("0"); // total
-																	// polarity
+
+			// total polarity
+			BigDecimal sentiment_polarity = new BigDecimal("0");
 
 			for (Text val : values) {
 				System.out.println(val);
 				String[] v = val.toString().split(",");
 				if (!v[0].isEmpty())
-					category = v[0]; // set category if the v[0] which store the
-										// categorys is not empty
+					// set category if the v[0] which store the categorys is not
+					// empty
+					category = v[0];
+
 				number_of_view += Integer.parseInt(v[1]);
 				sentiment_polarity = sentiment_polarity.add(new BigDecimal((v[2].trim())));
 			}
@@ -181,7 +128,6 @@ public class Sentiment {
 		}
 	}
 
-
 	public static class SentimentReducer extends Reducer<Text, Text, Text, Text> {
 		static Text result = new Text();
 
@@ -192,8 +138,9 @@ public class Sentiment {
 			int number_of_view = 0; // number_of_view
 			// I use BigDecimal instead of double or float because for avoiding
 			// loss of precision
-			BigDecimal sentiment_polarity = new BigDecimal("0"); // total
-																	// polarity
+
+			// total polarity
+			BigDecimal sentiment_polarity = new BigDecimal("0");
 
 			for (Text val : values) {
 				String[] v = val.toString().split(",");
@@ -276,12 +223,12 @@ public class Sentiment {
 
 		// Determine if the output folder exists, delete if it exists
 		Path path = new Path(settings.get(SettingType.cmd_outputPath));
-		FileSystem fileSystem = path.getFileSystem(conf);// Find this file
-															// according to path
+		// Find this file according to path
+		FileSystem fileSystem = path.getFileSystem(conf);
 		if (fileSystem.exists(path)) {
-			fileSystem.delete(path, true);// True means that even if there is
-											// something in the output, it is
-											// deleted.
+			// True means that even if there is something in the output, it is
+			// deleted.
+			fileSystem.delete(path, true);
 		}
 
 		System.exit(job.waitForCompletion(true) ? 0 : 1);
@@ -299,12 +246,15 @@ public class Sentiment {
 		for (int i = 0; i < argsList.size(); i++) {
 
 			switch (argsList.get(i)) {
-			case "-output": // argument match, set up output path, if do not
-							// follow a cmd, then path not empty
+			// argument match, set up output path, if do not
+			// follow a cmd, then path not empty
+			case "-output":
 				if ((i + 1) < argsList.size() && !checkCMD(argsList.get(i + 1)))
 					settings.put(SettingType.cmd_outputPath, argsList.get(i + 1));
 				break;
-			case "-data": // same but for data path
+
+			// same but for data path
+			case "-data":
 				if ((i + 1) < argsList.size() && !checkCMD(argsList.get(i + 1)))
 					settings.put(SettingType.cmd_dataPath, argsList.get(i + 1));
 				break;
